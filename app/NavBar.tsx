@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 
-import { Container, Flex } from "@radix-ui/themes";
+import { Box, Container, Flex } from "@radix-ui/themes";
 
 const NavBar = () => {
   const currentPath = usePathname();
@@ -34,6 +34,16 @@ const NavBar = () => {
               ))}
             </ul>
           </Flex>
+          <Box>
+            <Link
+              className={`${
+                "/login" === currentPath && "text-zinc-900"
+              } text-zinc-500 hover:text-zinc-800 transition-colors`}
+              href="/login"
+            >
+              Login
+            </Link>
+          </Box>
         </Flex>
       </Container>
     </nav>
