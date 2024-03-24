@@ -1,14 +1,10 @@
-"use client";
-
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { cookies } from "next/headers";
 import React from "react";
 
 import { Box, Container, Flex } from "@radix-ui/themes";
+import NavbarLink from "./components/NavbarLink";
 
 const NavBar = () => {
-  const currentPath = usePathname();
-
   const links = [
     { label: "Forum", href: "/forum" },
     { label: "Admin", href: "/admin" },
@@ -22,27 +18,17 @@ const NavBar = () => {
             <ul className="flex space-x-6">
               {links.map((link) => (
                 <li key={link.href}>
-                  <Link
-                    className={`${
-                      link.href === currentPath && "text-zinc-900"
-                    } text-zinc-500 hover:text-zinc-800 transition-colors`}
-                    href={link.href}
-                  >
-                    {link.label}
-                  </Link>
+                  <NavbarLink path={link.href} label={link.label} />
                 </li>
               ))}
             </ul>
           </Flex>
           <Box>
-            <Link
-              className={`${
-                "/login" === currentPath && "text-zinc-900"
-              } text-zinc-500 hover:text-zinc-800 transition-colors`}
-              href="/login"
-            >
-              Login
-            </Link>
+            {!cookies().has("session") ? (
+              <NavbarLink path={"/login"} label="Login" />
+            ) : (
+              <NavbarLink path={"/logout"} label="Logout" />
+            )}
           </Box>
         </Flex>
       </Container>
@@ -50,4 +36,5 @@ const NavBar = () => {
   );
 };
 
+export const dynamic = "force-dynamic";
 export default NavBar;

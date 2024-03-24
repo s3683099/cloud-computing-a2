@@ -1,5 +1,5 @@
 import "@radix-ui/themes/styles.css";
-import { Theme } from "@radix-ui/themes";
+import { Container, Theme } from "@radix-ui/themes";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
