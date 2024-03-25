@@ -10,9 +10,11 @@ export async function GET(request: NextRequest) {
       .orderBy("id", "desc")
       .get();
     snapshot.forEach((doc: { id: string; data: Function }) => {
-      // console.log(doc.id, "=>", doc.data());
+      console.log(doc.id, "=>", doc.data());
       data[doc.id] = doc.data();
     });
+
+    // console.log(snapshot[0]);
   } catch (err) {
     console.log(err);
     return NextResponse.json("Error, something went wrong", { status: 400 });

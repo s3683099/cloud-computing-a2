@@ -6,6 +6,8 @@ export async function POST(request: NextRequest) {
 
   // console.log("id", body.id);
   // console.log("password", body.password);
+  let imageUrl = "";
+  let userName = "";
 
   try {
     const snapshot = await firestore
@@ -19,13 +21,19 @@ export async function POST(request: NextRequest) {
         status: 400,
       });
     }
+    snapshot.forEach((doc: { id: string; data: Function }) => {
+      // console.log(doc.id, "=>", doc.data());
+      imageUrl = doc.data().image;
+      userName = doc.data().user_name;
+    });
   } catch (err) {
     console.log(err);
     return NextResponse.json("Error, something went wrong", { status: 400 });
   }
 
   const response = NextResponse.json({ message: "Welcome!" }, { status: 200 });
-  response.cookies.set("session", body.id);
+  response.cookies.set("session", userName);
+  response.cookies.set("image", imageUrl);
 
   return response;
 }
