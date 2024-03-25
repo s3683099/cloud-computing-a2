@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { Spinner } from "@radix-ui/themes";
 
 const LogoutPage = () => {
   const initialized = useRef(false);
@@ -15,7 +16,11 @@ const LogoutPage = () => {
     }
   });
 
-  return <div>LogoutPage</div>;
+  return (
+    <div>
+      <Spinner />
+    </div>
+  );
 };
 
 export default LogoutPage;

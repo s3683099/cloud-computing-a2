@@ -1,9 +1,8 @@
 import { Storage } from "@google-cloud/storage";
 
 const storageClientSingleton = () => {
-  return new Storage({ projectId: "cloud-computing-a1-s3683099" });
+  return new Storage();
 };
-
 declare global {
   var storage: undefined | ReturnType<typeof storageClientSingleton>;
 }

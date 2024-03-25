@@ -28,18 +28,20 @@ const NavBar = () => {
             {!cookies().has("session") ? (
               <NavbarLink path={"/login"} label="Login" />
             ) : (
-              <Flex align={"center"} gap="2">
-                <Avatar
-                  src={cookies().get("image")?.value}
-                  fallback="?"
-                  size="3"
-                  radius="full"
-                  className="cursor-pointer"
-                />
-                <NavbarLink
-                  path={"/admin"}
-                  label={cookies().get("session")?.value}
-                />
+              <Flex align={"center"} gap="5">
+                <Flex align={"center"} gap="2">
+                  <Avatar
+                    src={cookies().get("image")?.value}
+                    fallback="?"
+                    size="3"
+                    radius="full"
+                    className="cursor-pointer"
+                  />
+                  <NavbarLink
+                    path={"/admin"}
+                    label={cookies().get("session")?.value ?? ""}
+                  />
+                </Flex>
                 <NavbarLink path={"/logout"} label="Logout" />
               </Flex>
             )}
