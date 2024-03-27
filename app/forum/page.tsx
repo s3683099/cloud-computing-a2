@@ -1,7 +1,7 @@
 import Messages from "../components/Messages";
 
 const ForumPage = () => {
-  return <Messages />;
+  return <Messages isProfile={false} />;
 };
 
 export default ForumPage;

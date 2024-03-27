@@ -17,8 +17,8 @@ import React, { useState } from "react";
 
 const LoginPage = () => {
   const router = useRouter();
-  const [email, setEamil] = useState("s36830990");
-  const [password, setPassword] = useState("012345");
+  const [email, setEamil] = useState("");
+  const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -40,6 +40,7 @@ const LoginPage = () => {
 
   return (
     <Container maxWidth="250px">
+      <Heading className="mb-5">Login</Heading>
       {error && (
         <Callout.Root color="red" className="mb-5">
           <Callout.Text>{error}</Callout.Text>

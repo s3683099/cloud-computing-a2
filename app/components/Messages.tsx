@@ -26,9 +26,10 @@ interface Message {
   time: string;
   userName: string;
   profileImage: string;
+  id: string;
 }
 
-const Messages = () => {
+const Messages = ({ isProfile }: { isProfile: boolean }) => {
   const initialized = useRef(false);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
@@ -42,7 +43,9 @@ const Messages = () => {
   });
 
   const getMesssages = async () => {
-    const res = await axios.get("/api/message");
+    const res = await axios.get(
+      isProfile ? "/api/message/something" : "/api/message"
+    );
     res.data.forEach((message: Message) => {
       let date = new Date(message.created);
       message.time = date.toLocaleDateString("en-au", {
@@ -59,20 +62,27 @@ const Messages = () => {
     setIsLoading(false);
   };
 
+  const onEdit = (id: string) => {
+    router.push(`/forum/${id}/edit`);
+  };
+
   return (
     <Container>
       {isLoading ? (
         <Spinner />
       ) : (
         <Box>
-          <Button
-            onClick={() => {
-              router.push("/forum/new");
-            }}
-            className="!mb-5"
-          >
-            Create Message
-          </Button>
+          {!isProfile && (
+            <Button
+              onClick={() => {
+                router.push("/forum/new");
+              }}
+              className="!mb-5"
+            >
+              Create Message
+            </Button>
+          )}
+
           <Heading className="mb-3">Messages</Heading>
           <Flex gap="3" direction={"column"} width={"fit-content"}>
             {messages.map((message, index) => (
@@ -120,30 +130,36 @@ const Messages = () => {
                         </ScrollArea>
                       </Flex>
 
-                      <Flex direction={"column"} gap="3">
-                        <Box>
-                          <Heading size="2">Created Date</Heading>
-                          <Text as="p" size="2">
-                            {message.time}
-                          </Text>
-                        </Box>
+                      <Flex align={"center"} gap="4">
+                        <Flex direction={"column"} gap="3">
+                          <Box>
+                            <Heading size="2">Created Date</Heading>
+                            <Text as="p" size="2">
+                              {message.time}
+                            </Text>
+                          </Box>
 
-                        {/* <Separator my="3" size="4" /> */}
-                        <Flex align={"center"} gap="1">
-                          <Avatar
-                            src={message.profileImage}
-                            fallback="?"
-                            size="3"
-                            radius="full"
-                            className="cursor-pointer"
-                          />
-                          <Text as="p" size="2">
-                            {message.userName}
-                          </Text>
+                          <Flex align={"center"} gap="1">
+                            <Avatar
+                              src={message.profileImage}
+                              fallback="?"
+                              size="3"
+                              radius="full"
+                              className="cursor-pointer"
+                            />
+                            <Text as="p" size="2">
+                              {message.userName}
+                            </Text>
+                          </Flex>
                         </Flex>
+                        {isProfile && (
+                          <Box>
+                            <Button onClick={() => onEdit(message.id)}>
+                              Edit
+                            </Button>
+                          </Box>
+                        )}
                       </Flex>
-
-                      {/* <Separator my="3" size="4" /> */}
                     </Flex>
                   </Flex>
                 </Card>
