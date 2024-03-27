@@ -23,8 +23,6 @@ const LoginPage = () => {
   const [error, setError] = useState("");
 
   const onSubmit = async () => {
-    console.log("email", email);
-    console.log("password", password);
     setIsSubmitting(true);
 
     try {

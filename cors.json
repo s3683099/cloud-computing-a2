@@ -1,6 +1,12 @@
 [
   {
-    "origin": ["http://localhost:3000"],
+    "origin": [
+      "http://localhost:3000",
+      "https://storage.googleapis.com/cloud-computing-a1-s3683099.appspot.com",
+      "cloud-computing-a1-s3683099.appspot.com",
+      "https://storage.googleapis.com",
+      "https://cloud-computing-a1-s3683099.as.r.appspot.com"
+    ],
     "method": ["POST", "GET", "PUT"],
     "responseHeader": ["Content-Type"],
     "maxAgeSeconds": 3600

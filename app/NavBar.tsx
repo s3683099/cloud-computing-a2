@@ -8,7 +8,7 @@ import Image from "next/image";
 const NavBar = () => {
   const links = [
     { label: "Forum", href: "/forum" },
-    { label: "Admin", href: "/admin" },
+    { label: "Admin", href: "/profile" },
   ];
 
   return (
@@ -38,11 +38,11 @@ const NavBar = () => {
                     className="cursor-pointer"
                   />
                   <NavbarLink
-                    path={"/admin"}
+                    path={"/profile"}
                     label={cookies().get("session")?.value ?? ""}
                   />
                 </Flex>
-                <NavbarLink path={"/logout"} label="Logout" />
+                <NavbarLink path="/logout" label="Logout" />
               </Flex>
             )}
           </Box>

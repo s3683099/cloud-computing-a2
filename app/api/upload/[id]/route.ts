@@ -12,7 +12,6 @@ export async function GET(
     expires: Date.now() + 1 * 60 * 1000, //  1 minute,
     fields: {
       "x-goog-meta-test": "data",
-      bucket: "gs://cloud-computing-a1-s3683099.appspot.com",
     },
   };
 
