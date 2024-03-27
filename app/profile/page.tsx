@@ -33,7 +33,7 @@ const ProfilePage = () => {
       });
 
       if (res.status == 200) {
-        router.push("/logout");
+        router.push("/auth");
       } else {
         setError("The old password is incorrect");
       }

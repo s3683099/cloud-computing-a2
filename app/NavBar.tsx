@@ -42,7 +42,7 @@ const NavBar = () => {
                     label={cookies().get("session")?.value ?? ""}
                   />
                 </Flex>
-                <NavbarLink path="/logout" label="Logout" />
+                <NavbarLink path="/auth" label="Logout" />
               </Flex>
             )}
           </Box>
