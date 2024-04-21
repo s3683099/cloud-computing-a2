@@ -31,10 +31,11 @@ export async function POST(request: NextRequest) {
   //   if (!titles.includes(song.year)) titles.push(song.year);
   // });
   // console.log("Unique title count", titles.length);
+  type Org = { [key: string]: string } | undefined;
 
   try {
     let filterExpression = undefined;
-    let expressionAttributeValues = undefined;
+    let expressionAttributeValues: Org = undefined;
     let expressionAttributeNames = undefined;
 
     if (title != "") {
@@ -44,7 +45,7 @@ export async function POST(request: NextRequest) {
     if (artist != "") {
       if (filterExpression) {
         filterExpression += " AND Artist = :artist";
-        expressionAttributeValues[":artist"] = artist;
+        expressionAttributeValues![":artist"] = artist;
       } else {
         filterExpression = "Artist = :artist";
         expressionAttributeValues = { ":artist": artist };
@@ -53,7 +54,7 @@ export async function POST(request: NextRequest) {
     if (year != "") {
       if (filterExpression) {
         filterExpression += "  AND #y = :year";
-        expressionAttributeValues[":year"] = year;
+        expressionAttributeValues![":year"] = year;
       } else {
         filterExpression = "#y = :year";
         expressionAttributeValues = { ":year": year };

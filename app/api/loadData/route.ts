@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
   BatchWriteItemCommand,
+  DynamoDBClient,
   waitUntilTableExists,
 } from "@aws-sdk/client-dynamodb";
 import { promises as fs } from "fs";
@@ -19,43 +20,41 @@ import DynamoDB from "@/dynamoDB/client";
 interface Song {
   title: string;
   artist: string;
-  year: string
+  year: string;
   web_url: string;
   img_url: string;
 }
 
 export async function GET(request: NextRequest) {
-  const input = {
-    AttributeDefinitions: [
-      {
-        AttributeName: "Title",
-        AttributeType: "S",
-      },
-      {
-        AttributeName: "Artist",
-        AttributeType: "S",
-      },
-    ],
-    KeySchema: [
-      {
-        AttributeName: "Title",
-        KeyType: "HASH", //partition key
-      },
-      {
-        AttributeName: "Artist",
-        KeyType: "RANGE", //sort key
-      },
-    ],
-    ProvisionedThroughput: {
-      ReadCapacityUnits: 5,
-      WriteCapacityUnits: 5,
-    },
-    // BillingMode: "PAY_PER_REQUEST",
-    TableName: "Music",
-  };
-
   try {
-    const command = new CreateTableCommand(input);
+    const command = new CreateTableCommand({
+      AttributeDefinitions: [
+        {
+          AttributeName: "Title",
+          AttributeType: "S",
+        },
+        {
+          AttributeName: "Artist",
+          AttributeType: "S",
+        },
+      ],
+      KeySchema: [
+        {
+          AttributeName: "Title",
+          KeyType: "HASH", //partition key
+        },
+        {
+          AttributeName: "Artist",
+          KeyType: "RANGE", //sort key
+        },
+      ],
+      ProvisionedThroughput: {
+        ReadCapacityUnits: 5,
+        WriteCapacityUnits: 5,
+      },
+      // BillingMode: "PAY_PER_REQUEST",
+      TableName: "Music",
+    });
     const response = await DynamoDB.send(command);
 
     //upload images while table is being created
@@ -73,22 +72,16 @@ export async function GET(request: NextRequest) {
     await upload(imageUrls);
 
     const results = await waitUntilTableExists(
-      { client: DynamoDB, maxWaitTime: 120 },
+      { client: DynamoDB as DynamoDBClient, maxWaitTime: 120 },
       { TableName: "Music" }
     );
     if (results.state == "SUCCESS") {
-      const input1 = {
-        RequestItems: {
-          Music: [],
-        },
-      };
-
       let offset = 0;
 
       while (offset < data.songs.length) {
         const input1 = {
           RequestItems: {
-            Music: [],
+            Music: [] as object[],
           },
         };
         const slice = data.songs.slice(offset, offset + 25);
@@ -148,36 +141,6 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// export async function PUT(request: NextRequest) {
-//   try {
-//     // downloadAttachment(
-//     //   "https://raw.githubusercontent.com/davidpots/songnotes_cms/master/public/images/artists/TheTallestManOnEarth.jpg"
-//     // );
-
-//     const file = await fs.readFile(process.cwd() + "/a2.json", "utf8");
-//     const data = JSON.parse(file);
-
-//     let imageUrls: string[] = [];
-
-//     const songs: Song[] = data.songs;
-
-//     songs.forEach((song) => {
-//       if (!imageUrls.includes(song.img_url)) imageUrls.push(song.img_url);
-//     });
-
-//     await upload(imageUrls);
-
-//     const response = await S3Bucket.send(new ListObjectsCommand({ Bucket }));
-//     return NextResponse.json(response?.Contents ?? []);
-//     // return NextResponse.json({ message: "Success" }, { status: 200 });
-//   } catch (err) {
-//     console.log(err);
-//     return NextResponse.json("" + err, {
-//       status: 400,
-//     });
-//   }
-// }
-
 async function deleteImages() {
   // get the files
   const listCommand = new ListObjectsV2Command({ Bucket });
@@ -188,7 +151,7 @@ async function deleteImages() {
     const deleteCommand = new DeleteObjectsCommand({
       Bucket: Bucket,
       Delete: {
-        Objects: list.Contents.map((item) => ({ Key: item.Key })), // array of keys to be deleted
+        Objects: list.Contents!.map((item) => ({ Key: item.Key })), // array of keys to be deleted
         Quiet: false, // provides info on successful deletes
       },
     });
@@ -199,7 +162,7 @@ async function deleteImages() {
         console.log(`${error.Key} could not be deleted - ${error.Code}`)
       );
     }
-    return `${deleted.Deleted.length} files deleted.`;
+    return `${deleted.Deleted!.length} files deleted.`;
   }
 }
 

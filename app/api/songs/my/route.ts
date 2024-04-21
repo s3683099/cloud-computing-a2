@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
     const response = await DynamoDB.send(command);
     console.log(response.Items);
 
-    for (const item of response.Items) {
+    for (const item of response.Items!) {
       const input1 = {
         KeyConditionExpression: "Title = :title",
         ExpressionAttributeValues: {
