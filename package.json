@@ -5,9 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "deploy": "next build && gcloud app deploy"
+    "start": "next start --port 443",
+    "lint": "next lint"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.556.0",

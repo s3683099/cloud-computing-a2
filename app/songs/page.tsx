@@ -58,7 +58,7 @@ const SongsPage = () => {
 
     if (res.data.songs.length > 0) {
       res.data.songs.forEach((song: Song) => {
-        console.log(song);
+        // console.log(song);
         setSongs((prevState) => [...prevState, Object.assign({}, song)]);
       });
     } else {
