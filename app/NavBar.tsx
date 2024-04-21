@@ -1,14 +1,15 @@
 import { cookies } from "next/headers";
 import React from "react";
 
-import { Avatar, Box, Container, Flex } from "@radix-ui/themes";
+import { Avatar, Box, Container, Flex, Text } from "@radix-ui/themes";
 import NavbarLink from "./components/NavbarLink";
 import Image from "next/image";
 
 const NavBar = () => {
   const links = [
-    { label: "Forum", href: "/forum" },
-    { label: "Admin", href: "/profile" },
+    { label: "Subscriptions", href: "/subscriptions" },
+    { label: "Songs", href: "/songs" },
+    { label: "Admin", href: "/admin" },
   ];
 
   return (
@@ -30,17 +31,7 @@ const NavBar = () => {
             ) : (
               <Flex align={"center"} gap="5">
                 <Flex align={"center"} gap="2">
-                  <Avatar
-                    src={cookies().get("image")?.value}
-                    fallback="?"
-                    size="3"
-                    radius="full"
-                    className="cursor-pointer"
-                  />
-                  <NavbarLink
-                    path={"/profile"}
-                    label={cookies().get("session")?.value ?? ""}
-                  />
+                  <Text>{cookies().get("session")?.value ?? ""}</Text>
                 </Flex>
                 <NavbarLink path="/auth" label="Logout" />
               </Flex>

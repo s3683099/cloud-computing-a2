@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import firestore from "@/firestore/client";
-import { FieldValue } from "@google-cloud/firestore";
 
 export async function POST(request: NextRequest) {
   const body: {

@@ -32,7 +32,7 @@ const MessageForm = ({ params }: { params?: { id: string } }) => {
     if (!initialized.current) {
       initialized.current = true;
       if (params) {
-        getMessage();
+        // getMessage();
       } else {
         setIsLoading(false);
       }

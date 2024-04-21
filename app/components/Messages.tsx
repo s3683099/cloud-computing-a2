@@ -38,7 +38,7 @@ const Messages = ({ isProfile }: { isProfile: boolean }) => {
   useEffect(() => {
     if (!initialized.current) {
       initialized.current = true;
-      getMesssages();
+      // getMesssages();
     }
   });
 

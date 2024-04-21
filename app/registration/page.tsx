@@ -18,52 +18,18 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 const RegistrationPage = () => {
-  const [id, setId] = useState("");
+  const [email, setEmail] = useState("");
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
-  const [image, setImage] = useState<File>();
-  const [imageUrl, setImageUrl] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
-
-  const uploadImage = async () => {
-    const file = image;
-
-    const result = await axios.get(`/api/upload/${image?.name}`);
-    const { url, fields } = await result.data;
-    const formData = new FormData();
-    Object.entries({ ...fields, file }).forEach(([key, value]) => {
-      formData.append(key, value as string | Blob);
-    });
-    const upload = await fetch(url, {
-      method: "POST",
-      body: formData,
-    });
-
-    return upload;
-  };
 
   const onSubmit = async () => {
     setIsSubmitting(true);
 
     try {
-      let res: Response;
-      if (image) {
-        res = await uploadImage();
-      }
-
-      //post new message with image url
-      let imageUrlLocal =
-        "https://storage.googleapis.com/cloud-computing-a1-s3683099.appspot.com/" +
-        image?.name;
-
-      await axios.post("/api/register", {
-        id: id,
-        userName: userName,
-        password: password,
-        image: res! != null && res.ok ? imageUrlLocal : "",
-      });
+      await axios.post("/api/register", { email, userName, password });
 
       router.push("/login");
       router.refresh();
@@ -71,8 +37,6 @@ const RegistrationPage = () => {
       setIsSubmitting(false);
       setError(err.response.data);
     }
-    // //refresh
-    // setIsSubmitting(false);
   };
 
   return (
@@ -86,25 +50,27 @@ const RegistrationPage = () => {
         )}
         <Flex direction="column" gap="3" maxWidth="250px">
           <Flex direction="column" gap="1">
-            <Heading size="3">ID</Heading>
-            <TextField.Root onChange={(e) => setId(e.target.value)} />
+            <Heading size="3">Username</Heading>
+            <TextField.Root
+              onChange={(e) => setUserName(e.target.value)}
+              type="text"
+            />
           </Flex>
           <Flex direction="column" gap="1">
-            <Heading size="3">Username</Heading>
-            <TextField.Root onChange={(e) => setUserName(e.target.value)} />
+            <Heading size="3">Email</Heading>
+            <TextField.Root
+              onChange={(e) => setEmail(e.target.value)}
+              type="email"
+            />
           </Flex>
+
           <Flex direction="column" gap="1">
             <Heading size="3">Password</Heading>
-            <TextField.Root onChange={(e) => setPassword(e.target.value)} />
+            <TextField.Root
+              onChange={(e) => setPassword(e.target.value)}
+              type="password"
+            />
           </Flex>
-          <Heading size="3">User Image</Heading>
-          <input
-            type="file"
-            id="img"
-            name="img"
-            accept="image/*"
-            onChange={(e) => setImage(e.target.files![0])}
-          ></input>
           <Button disabled={isSubmitting} onClick={onSubmit}>
             {"Register"}
             {isSubmitting && <Spinner />}

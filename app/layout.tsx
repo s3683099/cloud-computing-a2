@@ -8,8 +8,8 @@ import NavBar from "./NavBar";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Assignment 1",
-  description: "Cloud Computing Assignment 1",
+  title: "Assignment 2",
+  description: "Cloud Computing Assignment 2",
 };
 
 export default function RootLayout({

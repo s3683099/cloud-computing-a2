@@ -1,55 +1,40 @@
 import { NextRequest, NextResponse } from "next/server";
-import firestore from "@/firestore/client";
+import DynamoDB from "@/dynamoDB/client";
+import { PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 
 export async function POST(request: NextRequest) {
   const body: {
-    id: string;
+    email: string;
     userName: string;
     password: string;
     image: string;
   } = await request.json();
 
-  let tempId = false;
-  let tempUsername = false;
-
   try {
-    const snapshot = await firestore
-      .collection("user")
-      .where("id", "==", body.id)
-      .get();
-    if (snapshot.empty) {
-      tempId = false;
-    } else {
-      tempId = true;
-    }
-
-    const snapshot1 = await firestore
-      .collection("user")
-      .where("user_name", "==", body.userName)
-      .get();
-    if (snapshot1.empty) {
-      tempUsername = false;
-    } else {
-      tempUsername = true;
-    }
-
-    if (tempId && tempUsername) {
-      return NextResponse.json(
-        "The ID already exists && The username already exists",
-        { status: 404 }
-      );
-    } else if (tempId) {
-      return NextResponse.json("The ID already exists", { status: 404 });
-    } else if (tempUsername) {
-      return NextResponse.json("The username already exists", { status: 404 });
-    }
-
-    await firestore.collection("user").doc().set({
-      id: body.id,
-      user_name: body.userName,
-      password: body.password,
-      image: body.image,
+    const command = new QueryCommand({
+      TableName: "login",
+      KeyConditionExpression: "email = :email",
+      ExpressionAttributeValues: {
+        ":email": body.email,
+      },
     });
+
+    const response = await DynamoDB.send(command);
+
+    if (response.Items?.length! > 0) {
+      return NextResponse.json("The email already exists", { status: 404 });
+    }
+
+    await DynamoDB.send(
+      new PutCommand({
+        TableName: "login",
+        Item: {
+          email: body.email,
+          user_name: body.userName,
+          password: body.password,
+        },
+      })
+    );
   } catch (err) {
     console.log(err);
     return NextResponse.json("Error, something went wrong", { status: 400 });

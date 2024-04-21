@@ -26,10 +26,7 @@ const LoginPage = () => {
     setIsSubmitting(true);
 
     try {
-      await axios.post("/api/login", {
-        id: email,
-        password: password,
-      });
+      await axios.post("/api/login", { email, password });
       router.push("/forum");
       router.refresh();
     } catch (err) {
@@ -48,12 +45,18 @@ const LoginPage = () => {
       )}
       <Flex direction="column" gap="3">
         <Flex direction="column" gap="1">
-          <Heading size="4">ID</Heading>
-          <TextField.Root onChange={(e) => setEamil(e.target.value)} />
+          <Heading size="4">Email</Heading>
+          <TextField.Root
+            onChange={(e) => setEamil(e.target.value)}
+            type="email"
+          />
         </Flex>{" "}
         <Flex direction="column" gap="1">
           <Heading size="4">Password</Heading>
-          <TextField.Root onChange={(e) => setPassword(e.target.value)} />
+          <TextField.Root
+            onChange={(e) => setPassword(e.target.value)}
+            type="password"
+          />
         </Flex>
         <Button disabled={isSubmitting} onClick={onSubmit}>
           {"Login"}
