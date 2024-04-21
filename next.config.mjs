@@ -4,7 +4,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'storage.googleapis.com',
+        hostname: 'mybucket-s3683099.s3.amazonaws.com',
         port: '',
         pathname: '/**',
       },

@@ -27,7 +27,7 @@ const LoginPage = () => {
 
     try {
       await axios.post("/api/login", { email, password });
-      router.push("/forum");
+      router.push("/songs");
       router.refresh();
     } catch (err) {
       setIsSubmitting(false);

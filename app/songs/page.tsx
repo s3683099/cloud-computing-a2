@@ -4,24 +4,41 @@ import {
   Box,
   Button,
   Callout,
+  Card,
   Container,
   Flex,
   Heading,
+  Inset,
+  ScrollArea,
   Separator,
   Spinner,
   TextField,
+  Text,
 } from "@radix-ui/themes";
 import React, { useEffect, useRef, useState } from "react";
-import Messages from "../components/Messages";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { cookies } from "next/headers";
 
-const ProfilePage = () => {
+interface Song {
+  Title: string;
+  Artist: string;
+  Year: string;
+  WebUrl: string;
+  ImgUrl: string;
+}
+
+const SongsPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
   const initialized = useRef(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [title, setTitle] = useState("");
+  const [artist, setArtist] = useState("");
+  const [year, setYear] = useState("");
+  const [songs, setSongs] = useState<Song[]>([]);
 
   useEffect(() => {
     if (!initialized.current) {
@@ -31,19 +48,38 @@ const ProfilePage = () => {
   });
 
   const getSongs = async () => {
+    setSongs((_) => []);
+
     const res = await axios.post("/api/songs", {
-      title: "",
-      artist: "",
-      year: "",
+      title: title,
+      artist: artist,
+      year: year,
     });
 
-    res.data.forEach((item) => {
-      console.log(item);
-      // setMessages((prevState) => [...prevState, Object.assign({}, message)]);
-    });
-    console.log(res.data);
+    if (res.data.songs.length > 0) {
+      res.data.songs.forEach((song: Song) => {
+        console.log(song);
+        setSongs((prevState) => [...prevState, Object.assign({}, song)]);
+      });
+    } else {
+      setError("No result is retrieved. Please query again");
+    }
 
     setIsLoading(false);
+  };
+
+  const onQuery = async () => {
+    setIsLoading(true);
+    await getSongs();
+  };
+
+  const onSubscribe = async (songTitle: String) => {
+    console.log(songTitle);
+
+    const res = await axios.post("/api/subscription", { title: songTitle });
+
+    // setIsLoading(true);
+    // await getSongs();
   };
 
   return (
@@ -55,30 +91,42 @@ const ProfilePage = () => {
           </Callout.Root>
         )}
 
-        {/* <Container>
+        <Flex gap="3">
+          <Flex direction="column" gap="1">
+            <Heading size="3">Title</Heading>
+            <TextField.Root onChange={(e) => setTitle(e.target.value)} />
+          </Flex>
+          <Flex direction="column" gap="1">
+            <Heading size="3">Year</Heading>
+            <TextField.Root onChange={(e) => setYear(e.target.value)} />
+          </Flex>
+          <Flex direction="column" gap="1">
+            <Heading size="3">Artist</Heading>
+            <TextField.Root onChange={(e) => setArtist(e.target.value)} />
+          </Flex>
+        </Flex>
+        <Box className="mb-5">
+          <Button disabled={isSubmitting} onClick={onQuery}>
+            {"Query"}
+            {isSubmitting && <Spinner />}
+          </Button>
+        </Box>
+
+        <Container>
           {isLoading ? (
             <Spinner />
           ) : (
             <Box>
-              <Button
-                onClick={() => {
-                  router.push("/forum/new");
-                }}
-                className="!mb-5"
-              >
-                Create Message
-              </Button>
-
-              <Heading className="mb-3">Messages</Heading>
+              <Heading className="mb-3">Songs: {songs.length}</Heading>
               <Flex gap="3" direction={"column"} width={"fit-content"}>
-                {messages.map((message, index) => (
+                {songs.map((song, index) => (
                   <Box key={index}>
                     <Card size="2">
                       <Flex>
                         <Inset clip="padding-box" side="left" pr="current">
-                          {message.image != "" ? (
+                          {song.ImgUrl != "" ? (
                             <Image
-                              src={message.image}
+                              src={song.ImgUrl}
                               width="200"
                               height="200"
                               alt="Bold typography"
@@ -98,53 +146,30 @@ const ProfilePage = () => {
                           className="!w-full"
                         >
                           <Flex direction={"column"} maxWidth="400px">
-                            <Heading size="2">Subject</Heading>
+                            <Heading size="2">Title</Heading>
                             <Text as="p" size="2">
-                              {message.subject}
+                              {song.Title}
                             </Text>
                             <Heading size="2" className="mt-2">
-                              Message
+                              Artist
                             </Heading>
-                            <ScrollArea
-                              // type="always"
-                              scrollbars="vertical"
-                              style={{ height: 50 }}
-                            >
-                              <Text as="p" size="2">
-                                {message.message}
-                              </Text>
-                            </ScrollArea>
+                            <Text as="p" size="2">
+                              {song.Artist}
+                            </Text>
+                            <Heading size="2" className="mt-2">
+                              Yar
+                            </Heading>
+                            <Text as="p" size="2">
+                              {song.Year}
+                            </Text>
                           </Flex>
 
                           <Flex align={"center"} gap="4">
-                            <Flex direction={"column"} gap="3">
-                              <Box>
-                                <Heading size="2">Created Date</Heading>
-                                <Text as="p" size="2">
-                                  {message.time}
-                                </Text>
-                              </Box>
-
-                              <Flex align={"center"} gap="1">
-                                <Avatar
-                                  src={message.profileImage}
-                                  fallback="?"
-                                  size="3"
-                                  radius="full"
-                                  className="cursor-pointer"
-                                />
-                                <Text as="p" size="2">
-                                  {message.userName}
-                                </Text>
-                              </Flex>
-                            </Flex>
-                            {isProfile && (
-                              <Box>
-                                <Button onClick={() => onEdit(message.id)}>
-                                  Edit
-                                </Button>
-                              </Box>
-                            )}
+                            <Box>
+                              <Button onClick={() => onSubscribe(song.Title)}>
+                                Subscribe
+                              </Button>
+                            </Box>
                           </Flex>
                         </Flex>
                       </Flex>
@@ -154,10 +179,10 @@ const ProfilePage = () => {
               </Flex>
             </Box>
           )}
-        </Container> */}
+        </Container>
       </Flex>
     </Container>
   );
 };
 
-export default ProfilePage;
+export default SongsPage;

@@ -9,6 +9,7 @@ export async function POST(request: NextRequest) {
   console.log("password", body.password);
 
   let userName = "";
+  let email = "";
 
   try {
     const command = new QueryCommand({
@@ -29,6 +30,7 @@ export async function POST(request: NextRequest) {
       });
     }
     userName = response.Items![0].user_name;
+    email = response.Items![0].email;
   } catch (err) {
     console.log(err);
     return NextResponse.json("Error, something went wrong", { status: 400 });
@@ -36,6 +38,7 @@ export async function POST(request: NextRequest) {
 
   const response = NextResponse.json({ message: "Welcome!" }, { status: 200 });
   response.cookies.set("session", userName);
+  response.cookies.set("email", email);
 
   return response;
 }
