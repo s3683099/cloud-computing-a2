@@ -60,7 +60,7 @@ const RegistrationPage = () => {
             <Heading size="3">Email</Heading>
             <TextField.Root
               onChange={(e) => setEmail(e.target.value)}
-              type="email"
+              type="text"
             />
           </Flex>
 
@@ -68,7 +68,7 @@ const RegistrationPage = () => {
             <Heading size="3">Password</Heading>
             <TextField.Root
               onChange={(e) => setPassword(e.target.value)}
-              type="password"
+              type="text"
             />
           </Flex>
           <Button disabled={isSubmitting} onClick={onSubmit}>

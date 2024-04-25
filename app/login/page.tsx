@@ -31,7 +31,7 @@ const LoginPage = () => {
       router.refresh();
     } catch (err) {
       setIsSubmitting(false);
-      setError("ID or password is invalid");
+      setError("Eamil or password is invalid");
     }
   };
 

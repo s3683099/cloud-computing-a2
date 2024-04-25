@@ -20,6 +20,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { cookies } from "next/headers";
+import SubscribeButton from "../components/SubscribeButton";
 
 interface Song {
   Title: string;
@@ -48,21 +49,27 @@ const SongsPage = () => {
   });
 
   const getSongs = async () => {
-    setSongs((_) => []);
+    try {
+      setSongs((_) => []);
 
-    const res = await axios.post("/api/songs", {
-      title: title,
-      artist: artist,
-      year: year,
-    });
-
-    if (res.data.songs.length > 0) {
-      res.data.songs.forEach((song: Song) => {
-        // console.log(song);
-        setSongs((prevState) => [...prevState, Object.assign({}, song)]);
+      const res = await axios.post("/api/songs", {
+        title: title,
+        artist: artist,
+        year: year,
       });
-    } else {
-      setError("No result is retrieved. Please query again");
+
+      if (res.data.songs.length > 0) {
+        res.data.songs.forEach((song: Song) => {
+          // console.log(song);
+          setSongs((prevState) => [...prevState, Object.assign({}, song)]);
+        });
+
+        setError("");
+      } else {
+        setError("No result is retrieved. Please query again");
+      }
+    } catch (err: any) {
+      setError(err.response.data);
     }
 
     setIsLoading(false);
@@ -71,15 +78,6 @@ const SongsPage = () => {
   const onQuery = async () => {
     setIsLoading(true);
     await getSongs();
-  };
-
-  const onSubscribe = async (songTitle: String) => {
-    console.log(songTitle);
-
-    const res = await axios.post("/api/subscription", { title: songTitle });
-
-    // setIsLoading(true);
-    // await getSongs();
   };
 
   return (
@@ -118,7 +116,7 @@ const SongsPage = () => {
           ) : (
             <Box>
               <Heading className="mb-3">Songs: {songs.length}</Heading>
-              <Flex gap="3" direction={"column"} width={"fit-content"}>
+              <Flex gap="3" direction={"column"} className="max-w-xl">
                 {songs.map((song, index) => (
                   <Box key={index}>
                     <Card size="2">
@@ -166,9 +164,7 @@ const SongsPage = () => {
 
                           <Flex align={"center"} gap="4">
                             <Box>
-                              <Button onClick={() => onSubscribe(song.Title)}>
-                                Subscribe
-                              </Button>
+                              <SubscribeButton songTitle={song.Title} />
                             </Box>
                           </Flex>
                         </Flex>

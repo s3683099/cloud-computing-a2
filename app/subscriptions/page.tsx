@@ -20,6 +20,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { cookies } from "next/headers";
+import RemoveButton from "../components/RemoveButton";
 
 interface Song {
   Title: string;
@@ -48,9 +49,10 @@ const SubscriptionPage = () => {
   });
 
   const getSongs = async () => {
-    setSongs((_) => []);
+    // setIsLoading(true);
 
     const res = await axios.get("/api/songs/my");
+    setSongs((_) => []);
 
     if (res.data.songs.length > 0) {
       res.data.songs.forEach((song: Song) => {
@@ -58,25 +60,10 @@ const SubscriptionPage = () => {
         setSongs((prevState) => [...prevState, Object.assign({}, song)]);
       });
     } else {
-      setError("No result is retrieved. Please query again");
+      // setError("No result is retrieved. Please query again");
     }
 
     setIsLoading(false);
-  };
-
-  const onRemove = async (songTitle: String) => {
-    console.log(songTitle);
-
-    const res = await axios.put("/api/songs/my", {
-      title: songTitle,
-    });
-
-    router.refresh();
-
-    // const res = await axios.post("/api/subscription", { title: songTitle });
-
-    // setIsLoading(true);
-    // await getSongs();
   };
 
   return (
@@ -85,8 +72,13 @@ const SubscriptionPage = () => {
         <Spinner />
       ) : (
         <Box>
+          {error && (
+            <Callout.Root color="red" className="mb-5">
+              <Callout.Text>{error}</Callout.Text>
+            </Callout.Root>
+          )}
           <Heading className="mb-3">Subscriptions: {songs.length}</Heading>
-          <Flex gap="3" direction={"column"} width={"fit-content"}>
+          <Flex gap="3" direction={"column"} className="max-w-xl">
             {songs.map((song, index) => (
               <Box key={index}>
                 <Card size="2">
@@ -134,12 +126,10 @@ const SubscriptionPage = () => {
 
                       <Flex align={"center"} gap="4">
                         <Box>
-                          <Button
-                            onClick={() => onRemove(song.Title)}
-                            color="red"
-                          >
-                            Remove
-                          </Button>
+                          <RemoveButton
+                            songTitle={song.Title}
+                            onRefresh={async () => await getSongs()}
+                          />
                         </Box>
                       </Flex>
                     </Flex>
